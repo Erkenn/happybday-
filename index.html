@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Windows 95</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap">
+<style>
+:root{--face:#c0c0c0;--hi:#fff;--sh:#808080;--dk:#000;--blue:#000080;--desk:#008080}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;overflow:hidden}
+body{background:#000;font:13px "MS Sans Serif",Tahoma,Verdana,sans-serif;color:#000;user-select:none}
+.raised{background:var(--face);border:2px solid;border-color:var(--hi) var(--dk) var(--dk) var(--hi);box-shadow:inset -1px -1px var(--sh),inset 1px 1px #dfdfdf}
+.sunken{background:#fff;border:2px solid;border-color:var(--sh) var(--hi) var(--hi) var(--sh);box-shadow:inset 1px 1px var(--dk)}
+button{font:inherit;color:inherit;cursor:pointer;background:var(--face);border:2px solid;border-color:var(--hi) var(--dk) var(--dk) var(--hi);box-shadow:inset -1px -1px var(--sh);padding:3px 10px}
+button:active{border-color:var(--dk) var(--hi) var(--hi) var(--dk);box-shadow:inset 1px 1px var(--sh)}
+button:focus-visible,input:focus-visible{outline:1px dotted #000;outline-offset:-4px}
+#desktop{position:absolute;inset:0 0 34px 0;display:grid;grid-auto-flow:column;grid-template-rows:repeat(auto-fill,88px);grid-auto-columns:88px;gap:4px;padding:8px;align-content:start}
+.icon{width:84px;height:84px;display:flex;flex-direction:column;align-items:center;gap:3px;color:#fff;text-align:center;font-size:12px;cursor:default;padding:2px;background:none;border:1px solid transparent;box-shadow:none}
+.icon:active{box-shadow:none}
+.icon .e{font-size:32px;line-height:38px}
+.icon span:last-child{padding:0 2px;line-height:1.15}
+.icon.sel span:last-child{background:var(--blue);outline:1px dotted #ff0}
+.icon.sel .e{filter:brightness(.6) sepia(1) hue-rotate(180deg)}
+.win{position:absolute;display:flex;flex-direction:column;padding:2px;min-width:240px}
+.title{display:flex;align-items:center;gap:4px;background:linear-gradient(90deg,var(--blue),#1084d0);color:#fff;font-weight:bold;padding:2px 3px;cursor:move;touch-action:none}
+.win.inactive .title{background:linear-gradient(90deg,#808080,#b0b0b0)}
+.title .t{flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.title button{padding:0;width:18px;height:16px;line-height:12px;font-weight:bold;font-size:12px}
+.body{padding:10px;flex:1;overflow:auto}
+.center{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;height:100%}
+.big{font-size:48px}
+.row{display:flex;align-items:center;gap:8px;margin:6px 0}
+.tracks{list-style:none;margin:0;padding:0;height:110px}
+.tracks li{padding:4px 6px;display:flex;gap:6px;align-items:center;cursor:default}
+.tracks li.sel{background:var(--blue);color:#fff}
+.tracks li.locked{color:var(--sh)}
+.bar{height:14px;margin:8px 0;position:relative}
+.bar i{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--blue)}
+fieldset{border:2px groove var(--hi);margin:0 0 8px;padding:6px 10px}
+#taskbar{position:absolute;left:0;right:0;bottom:0;height:34px;display:flex;align-items:center;gap:6px;padding:2px 3px;z-index:9999}
+#start{font-weight:bold;display:flex;gap:4px;align-items:center;height:28px}
+#search{flex:1;height:26px;padding:2px 6px;font:inherit;border:2px solid;border-color:var(--sh) var(--hi) var(--hi) var(--sh);box-shadow:inset 1px 1px var(--dk);background:#fff;user-select:text;min-width:0}
+#clock{height:26px;padding:4px 10px;border:1px solid;border-color:var(--sh) var(--hi) var(--hi) var(--sh);white-space:nowrap}
+#menu{position:absolute;left:3px;bottom:34px;width:180px;display:none;z-index:9999;padding:3px}
+#menu.open{display:block}
+#menu div{padding:8px 10px;cursor:default}
+#menu div:hover{background:var(--blue);color:#fff}
+#tip{position:fixed;display:none;z-index:10000;background:#ffffe1;border:1px solid #000;padding:3px 6px;max-width:260px;pointer-events:none}
+.riddle{font-family:"Noto Sans SC","Microsoft YaHei",sans-serif;font-size:16px;line-height:1.6;padding:8px 14px;margin:2px 0}
+.map{position:relative;height:250px;background-color:#e4e4e4;background-image:linear-gradient(#bdbdbd 1px,transparent 1px),linear-gradient(90deg,#bdbdbd 1px,transparent 1px);background-size:32px 32px;overflow:hidden}
+.map .q{position:absolute;left:8px;top:8px;right:8px;padding:5px 8px;background:#fff;border:1px solid var(--sh);color:#666}
+.pin{position:absolute;left:50%;top:50%;transform:translate(-50%,-90%);font-size:44px;line-height:1;background:none;border:0;box-shadow:none;padding:0;cursor:pointer;filter:drop-shadow(1px 3px 2px rgba(0,0,0,.4))}
+.pin:active{box-shadow:none;border:0}
+.ok{color:#006400;font-weight:bold}.bad{color:#a00000}
+#screen{position:absolute;inset:0;background:var(--desk);overflow:hidden;transform-origin:50% 50%;transition:transform 1.2s cubic-bezier(.6,0,.9,.4),border-radius 1.2s}
+#screen.off{transform:scale(0);border-radius:50%}
+#bye{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;background:#000;opacity:0;visibility:hidden;transition:opacity 1.6s;z-index:20000}
+#bye.show{opacity:1;visibility:visible}
+#bye h1{margin:0;padding:0 16px;font:400 clamp(40px,9vw,110px)/1.2 Pacifico,"Brush Script MT",cursive;color:#fff;text-shadow:0 0 18px #ff4fa3,0 0 50px #7b5cff}
+#amb{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+#cf{position:fixed;inset:0;pointer-events:none;z-index:20001;display:none}
+.rbx{margin:-10px;padding:8px 18px;background:#232527;color:#fff;font-family:"Trebuchet MS",Verdana,sans-serif}
+.rbx h3{margin:8px 0 6px;font-size:17px}
+.set{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid #3a3d40}
+.set:last-child{border:0}
+.set .n{flex:1;font-size:15px}
+.set small{color:#8d9196;font-size:11px;margin-left:6px}
+.tg{flex:none;width:52px;height:28px;border-radius:14px;border:0;padding:0;background:#6b6e72;position:relative;transition:background .15s;box-shadow:none}
+.tg::after{content:"";position:absolute;top:3px;left:3px;width:22px;height:22px;border-radius:50%;background:#fff;transition:left .15s}
+.tg.on{background:#00b06f}.tg.on::after{left:27px}
+.tg:active{border:0;box-shadow:none}.tg:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.set.dis,.set.dis .tg{cursor:not-allowed}.set.dis .tg{opacity:.5}
+body.low .win .title{background:var(--blue)}body.low .win.inactive .title{background:var(--sh)}
+.pl{display:flex;flex-direction:column;gap:8px}
+.trk{padding:8px 10px}
+.trk .tt{font-weight:bold;margin-bottom:6px;display:flex;gap:6px;align-items:center}
+.trk audio{display:block;width:100%;height:34px}
+.trk.locked{background:#d4d0c8;color:#555;cursor:not-allowed}
+.trk.locked .tt{margin:0}.trk .lm{margin-left:auto;font-size:11px;font-weight:normal;color:var(--sh)}
+.letter{padding:20px 24px;border:2px solid;border-color:var(--sh) var(--hi) var(--hi) var(--sh);background:#fffbe8 repeating-linear-gradient(transparent 0 27px,rgba(0,0,128,.13) 27px 28px);font-family:"Courier New",Courier,monospace;color:#2b2b2b}
+.letter h1{margin:0 0 20px;text-align:center;font:bold 34px/1.15 "Trebuchet MS",Impact,sans-serif;color:#000080;text-shadow:2px 2px 0 #ff9ccf}
+.letter p{margin:0;font-size:16px;line-height:28px}
+.letter p+p{margin-top:28px}
+@media(max-width:600px){.win{max-width:96vw}}
+</style>
+</head>
+<body>
+<div id="screen">
+<canvas id="amb"></canvas>
+<div id="desktop"></div>
+<div id="menu" class="raised"></div>
+<div id="taskbar" class="raised">
+  <button id="start"><span>🪟</span> Пуск</button>
+  <input id="search" class="sunken" type="text" placeholder="Поиск…" aria-label="Поиск">
+  <div id="clock"></div>
+</div>
+</div>
+<div id="bye"><h1>С Днем Рождения! 🎂</h1></div>
+<canvas id="cf"></canvas>
+
+<script>
+const $ = (s, r = document) => r.querySelector(s);
+let z = 10, offset = 0;
+
+/* ---------- Состояние квеста ---------- */
+const HINT = 'Подсказка: ответ на загадку нужно вводить в поиск на русском языке!';
+let mapsUnlocked = false, solved = false, ac, soundOn = true, lowGfx = false;
+const norm = s => s.toLowerCase().replace(/ё/g,'е').replace(/[^\p{L}\p{N} ]/gu,'').replace(/\s+/g,' ').trim();
+function playSeq(notes, type = 'square', vol = .07){
+  if(!soundOn) return;
+  try{
+    ac = ac || new (window.AudioContext || window.webkitAudioContext)(); ac.resume();
+    let t = ac.currentTime;
+    notes.forEach(([f, d]) => {
+      const o = ac.createOscillator(), g = ac.createGain();
+      o.type = type; o.frequency.value = f;
+      g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(.001, t + d);
+      o.connect(g).connect(ac.destination); o.start(t); o.stop(t + d); t += d * .85;
+    });
+  }catch(_){}
+}
+const blip = () => playSeq([[1200,.06]], 'square', .06);
+const winSound = () => playSeq([[523,.12],[659,.12],[784,.12],[1047,.35]]);
+const fanfare = () => playSeq([[523,.14],[523,.14],[523,.14],[659,.3],[587,.14],[659,.14],[784,.45],[659,.14],[784,.14],[1047,.7]], 'sawtooth', .06);
+const closeWin = id => { if(wins[id]){ wins[id].remove(); delete wins[id]; } };
+const tip = document.createElement('div'); tip.id = 'tip'; document.body.append(tip);
+document.addEventListener('mouseover', e => {
+  const t = e.target.closest('[data-hint]');
+  if(t){ tip.textContent = t.dataset.hint; tip.style.display = 'block'; } else tip.style.display = 'none';
+});
+document.addEventListener('mousemove', e => {
+  tip.style.left = Math.min(e.clientX + 14, innerWidth - tip.offsetWidth - 4) + 'px';
+  tip.style.top = Math.min(e.clientY + 18, innerHeight - tip.offsetHeight - 4) + 'px';
+});
+
+/* ---------- Иконки ---------- */
+const junk = [
+  ['🌐','Сайт про хомяков'],['🎣','Рыбалка 2004'],['📉','Курс доллара'],['🧟','Зомби апдейт'],
+  ['🗑️','Корзина (пустая)'],['📁','Новая папка (7)'],['💾','Дискета А:'],['🕹️','Тетрис.exe'],
+  ['📠','Факс'],['🐸','Лягушка.scr'],['📼','Видеокассета'],['🧮','Калькулятор']
+];
+const real = [
+  ['⚙️','Настройки','settings'],['🗺️','Яндекс.Карты','maps'],
+  ['💌','Письма','mail'],['🎵','Музыка','music']
+];
+const desk = $('#desktop');
+function icon(e, name, onOpen){
+  const b = document.createElement('button');
+  b.className = 'icon';
+  b.innerHTML = `<span class="e">${e}</span><span>${name}</span>`;
+  b.onclick = () => { document.querySelectorAll('.icon').forEach(i => i.classList.remove('sel')); b.classList.add('sel'); };
+  b.ondblclick = onOpen;
+  desk.append(b);
+  return b;
+}
+real.forEach(([e,n,id]) => { const b = icon(e, n, () => openApp(id)); if(id === 'maps') b.dataset.hint = HINT; });
+junk.forEach(([e,n]) => icon(e, n, () => openWin('err:'+n, 'Ошибка', errorBody(n), 280)));
+desk.onclick = e => { if(e.target === desk) document.querySelectorAll('.icon').forEach(i => i.classList.remove('sel')); };
+
+/* ---------- Окна ---------- */
+const wins = {};
+function focusWin(w){
+  Object.values(wins).forEach(x => x.classList.add('inactive'));
+  w.classList.remove('inactive'); w.style.zIndex = ++z;
+}
+function openWin(id, title, body, width = 340, pos){
+  if(wins[id]){ focusWin(wins[id]); return wins[id]; }
+  const w = document.createElement('div');
+  w.className = 'win raised';
+  w.style.width = Math.min(width, innerWidth - 10) + 'px';
+  const n = offset++ % 6;
+  w.style.left = (pos ? pos[0] : 120 + n*26) + 'px';
+  w.style.top = (pos ? pos[1] : 40 + n*26) + 'px';
+  w.innerHTML = `<div class="title"><span>🪟</span><span class="t"></span><button aria-label="Закрыть">✕</button></div><div class="body"></div>`;
+  $('.t', w).textContent = title;
+  const b = $('.body', w);
+  typeof body === 'string' ? b.innerHTML = body : b.append(body);
+  $('.title button', w).onclick = () => { w.querySelectorAll('audio').forEach(a => a.pause()); w.remove(); delete wins[id]; };
+  w.addEventListener('pointerdown', () => focusWin(w));
+  drag(w, $('.title', w));
+  $('#screen').append(w);
+  wins[id] = w; focusWin(w);
+  return w;
+}
+function drag(w, handle){
+  handle.addEventListener('pointerdown', e => {
+    if(e.target.closest('button')) return;
+    const dx = e.clientX - w.offsetLeft, dy = e.clientY - w.offsetTop;
+    handle.setPointerCapture(e.pointerId);
+    const move = ev => {
+      w.style.left = Math.max(-w.offsetWidth+60, Math.min(innerWidth-60, ev.clientX - dx)) + 'px';
+      w.style.top = Math.max(0, Math.min(innerHeight-60, ev.clientY - dy)) + 'px';
+    };
+    const up = () => { handle.removeEventListener('pointermove', move); handle.removeEventListener('pointerup', up); };
+    handle.addEventListener('pointermove', move); handle.addEventListener('pointerup', up);
+  });
+}
+const errorBody = n => `<div class="row"><span class="big">⛔</span><div>«${n}»<br>Сайт недоступен.</div></div><div class="row" style="justify-content:center"><button onclick="this.closest('.win').querySelector('.title button').click()">OK</button></div>`;
+const lockBody = (txt, id) => `<div class="center"><div class="big">🔒</div><div>${txt}</div><button onclick="this.closest('.win').querySelector('.title button').click()">OK</button></div>`;
+
+/* ---------- Приложения ---------- */
+function openApp(id){
+  if(id === 'settings') return openSettings();
+  if(id === 'maps') return mapsUnlocked ? openMaps() : openWin('maps', '🗺️ Яндекс.Карты', mapsLockBody(), 340, [240,70]);
+  if(id === 'mail') return openWin('mail', '💌 Письма', solved ? mailBody() : lockBody('Нужно решить загадку, чтобы открыть это'), solved ? 470 : 320, [200,200]);
+  if(id === 'music') return openMusic();
+}
+
+const t3HTML = () => solved
+  ? `<div class="tt">???</div><audio controls src="voice.mp3"></audio>`
+  : `<div class="tt">🔒 ??? <span class="lm">заблокировано</span></div>`;
+function openMusic(){
+  const w = openWin('music', '🎵 Музыка', `<div class="pl">
+    <div class="trk sunken"><div class="tt">Stray Kids - Red Lights</div><audio controls src="stray_kids_red_lights.mp3"></audio></div>
+    <div class="trk sunken"><div class="tt">Stray Kids - Domino</div><audio controls src="stray_kids_domino.mp3"></audio></div>
+    <div class="trk sunken ${solved ? '' : 'locked'}" id="t3">${t3HTML()}</div></div>`, 360, [380,60]);
+  if(w.dataset.init) return;
+  w.dataset.init = 1;
+  w.querySelectorAll('audio').forEach(a => a.muted = !soundOn);
+  w.addEventListener('play', e => w.querySelectorAll('audio').forEach(a => { if(a !== e.target) a.pause(); }), true);
+  w.addEventListener('click', e => {
+    if(!solved && e.target.closest('#t3')) openWin('locked3', '🔒 Доступ закрыт', lockBody('Этот трек пока заблокирован'), 280, [260,260]);
+  });
+}
+
+/* ---------- Квест ---------- */
+function mapsLockBody(){
+  return `<div class="center" data-hint="${HINT}"><div class="big">🔒</div>
+    <div>Нужно чота сделать перед этим хммм... 🤔</div>
+    <div class="riddle sunken" lang="zh">我有城市，但没有房子。<br>我有山，但没有树。<br>我有水，但没有鱼。<br>我有什么？</div>
+    <button onclick="this.closest('.win').querySelector('.title button').click()">OK</button></div>`;
+}
+function unlockMaps(){
+  mapsUnlocked = true; winSound();
+  const pos = wins.maps ? [wins.maps.offsetLeft, wins.maps.offsetTop] : [240, 70];
+  closeWin('maps');
+  const w = openMaps(); w.style.left = pos[0] + 'px'; w.style.top = pos[1] + 'px';
+  document.querySelectorAll('.icon').forEach(i => delete i.dataset.hint);
+  tip.style.display = 'none';
+}
+function openMaps(){
+  return openWin('maps', '🗺️ Яндекс.Карты', `<div class="map sunken"><div class="q">🔍 Поиск мест и адресов</div>
+    <button class="pin" aria-label="Булавка" onclick="openRiddle2()">📍</button></div>`, 380, [240,70]);
+}
+function openRiddle2(){
+  if(wins.riddle2) return focusWin(wins.riddle2);
+  const w = openWin('riddle2', '📍 Загадка 2', solved ? `<div class="ok">Загадка уже решена ✔</div>` : `
+    <p><b>я хочу ... понимаете?</b><br><small>(подсказка: чикенбурбе)</small></p>
+    <div class="row"><input id="ans2" class="sunken" style="flex:1;padding:3px 6px;font:inherit;user-select:text" placeholder="Введите ответ" autocomplete="off"><button id="go2">OK</button></div>
+    <div id="fb2"></div>`, 340, [280,120]);
+  if(solved) return;
+  const check = () => {
+    const v = norm($('#ans2', w).value), fb = $('#fb2', w);
+    if(v === 'вкусно и точка'){ fb.className = 'ok'; fb.textContent = 'Верно! Письма и Трек 3 разблокированы 🎉'; $('#ans2', w).disabled = true; solveAll(); }
+    else { fb.className = 'bad'; fb.textContent = 'Неверно, попробуй ещё раз.'; }
+  };
+  $('#go2', w).onclick = check;
+  $('#ans2', w).addEventListener('keydown', e => { if(e.key === 'Enter') check(); });
+  $('#ans2', w).focus();
+}
+// ТЕКСТ ПИСЬМА: правь абзацы <p> ниже
+function mailBody(){
+  return `<div class="letter"><h1>С Днем Рождения! 🎉</h1>
+    <p>С днем рождения!!!</p>
+    <p>К сожалению твой подарок приедет только числа 31((( пока что только мини подарочек, с дршечкой 🥳🎉</p>
+    <p>Послушай 3 песенку и выключай комп через пуск как человек!!!</p></div>`;
+}
+function openSettings(){
+  const tg = (k, on, label) => `<div class="set"><span class="n">${label}</span><button class="tg ${on ? 'on' : ''}" role="switch" aria-checked="${on}" aria-label="${label}" data-k="${k}"></button></div>`;
+  const w = openWin('settings', '⚙️ Настройки', `<div class="rbx"><h3>Настройки</h3>
+    ${tg('vol', soundOn, 'Громкость')}${tg('gfx', !lowGfx, 'Качество графики')}
+    <div class="set dis"><span class="n">Shift Lock<small>set by developer</small></span><button class="tg on dis" role="switch" aria-checked="true" aria-disabled="true" aria-label="Shift Lock" tabindex="-1"></button></div></div>`, 330, [90,50]);
+  if(w.dataset.init) return;
+  w.dataset.init = 1;
+  w.addEventListener('click', e => {
+    const t = e.target.closest('.tg');
+    if(!t || t.classList.contains('dis')) return;
+    const on = t.classList.toggle('on');
+    t.setAttribute('aria-checked', on);
+    if(t.dataset.k === 'vol'){
+      if(on){ soundOn = true; blip(); } else { blip(); soundOn = false; }
+      document.querySelectorAll('audio').forEach(a => a.muted = !soundOn);
+    } else {
+      blip(); lowGfx = !on; document.body.classList.toggle('low', lowGfx);
+    }
+  });
+}
+let off = false;
+function shutdown(){
+  if(off) return; off = true;
+  menu.classList.remove('open');
+  document.querySelectorAll('audio').forEach(a => a.pause());
+  $('#screen').classList.add('off');
+  setTimeout(() => { $('#bye').classList.add('show'); startConfetti(); }, 2200);
+}
+function ambientConfetti(){
+  const c = $('#amb'), x = c.getContext('2d'), cols = ['#ff9ccf','#ffd93d','#ffffff','#c0a8ff','#9dffb0'];
+  const size = () => { c.width = c.offsetWidth; c.height = c.offsetHeight; };
+  size(); addEventListener('resize', size);
+  const mk = top => ({x:Math.random()*c.width, y:top ? -10 : Math.random()*c.height, r:2+Math.random()*2.5, vy:.4+Math.random()*.8, s:Math.random()*6.28, c:cols[Math.random()*cols.length|0]});
+  const ps = Array.from({length:70}, () => mk(false));
+  (function frame(){
+    x.clearRect(0, 0, c.width, c.height);
+    if(!lowGfx && !off) ps.forEach((p, i) => {
+      p.y += p.vy; p.s += .03; p.x += Math.sin(p.s) * .5;
+      if(p.y > c.height + 10) ps[i] = mk(true);
+      x.fillStyle = p.c; x.fillRect(p.x, p.y, p.r * 1.6, p.r);
+    });
+    requestAnimationFrame(frame);
+  })();
+}
+function startConfetti(){
+  const c = $('#cf'), x = c.getContext('2d'), cols = ['#ff4fa3','#ffd93d','#4dd2ff','#7b5cff','#6bff95','#ff7a45'];
+  c.style.display = 'block';
+  const size = () => { c.width = innerWidth; c.height = innerHeight; };
+  size(); addEventListener('resize', size);
+  const mk = top => ({x:Math.random()*c.width, y:top ? -20 : -Math.random()*c.height, w:6+Math.random()*8, h:10+Math.random()*10,
+    vy:2+Math.random()*3.5, vx:-1+Math.random()*2, r:Math.random()*6.28, vr:(Math.random()-.5)*.3, s:Math.random()*6.28, c:cols[Math.random()*cols.length|0]});
+  const ps = Array.from({length:240}, () => mk(false));
+  (function frame(){
+    x.clearRect(0, 0, c.width, c.height);
+    ps.forEach((p, i) => {
+      p.y += p.vy; p.s += .05; p.x += p.vx + Math.sin(p.s); p.r += p.vr;
+      if(p.y > c.height + 20) ps[i] = mk(true);
+      x.save(); x.translate(p.x, p.y); x.rotate(p.r); x.fillStyle = p.c; x.fillRect(-p.w/2, -p.h/2, p.w, p.h); x.restore();
+    });
+    requestAnimationFrame(frame);
+  })();
+}
+function solveAll(){
+  solved = true; fanfare();
+  if(wins.mail){ $('.body', wins.mail).innerHTML = mailBody(); wins.mail.style.width = Math.min(470, innerWidth - 10) + 'px'; }
+  closeWin('locked3');
+  if(wins.music){
+    const t = $('#t3', wins.music);
+    t.classList.remove('locked'); t.innerHTML = t3HTML();
+    t.querySelectorAll('audio').forEach(a => a.muted = !soundOn);
+  }
+}
+
+/* ---------- Панель задач ---------- */
+const menu = $('#menu');
+menu.innerHTML = real.map(r => `<div data-id="${r[2]}">${r[0]} ${r[1]}</div>`).join('') + '<div data-id="off">🔌 Завершение работы…</div>';
+$('#start').onclick = e => { e.stopPropagation(); menu.classList.toggle('open'); };
+document.addEventListener('pointerdown', e => { if(!e.target.closest('#menu,#start')) menu.classList.remove('open'); });
+menu.onclick = e => {
+  const id = e.target.dataset.id; if(!id) return;
+  menu.classList.remove('open');
+  id === 'off' ? shutdown() : openApp(id);
+};
+$('#search').addEventListener('keydown', e => {
+  if(e.key !== 'Enter') return;
+  const q = e.target.value.trim().toLowerCase(); if(!q) return;
+  if(!mapsUnlocked && ['карта','яндекс карты','карты'].includes(q.replace(/\s+/g,' '))){ e.target.value = ''; unlockMaps(); return; }
+  const hit = real.find(r => r[1].toLowerCase().includes(q));
+  hit ? openApp(hit[2]) : openWin('nf', 'Результаты поиска', `<div class="row"><span class="big">🔍</span><div>По запросу «${q.replace(/[<>&]/g,'')}» ничего не найдено.</div></div>`, 300, [220,120]);
+  e.target.value = '';
+});
+const clock = $('#clock');
+const tick = () => clock.textContent = new Date().toLocaleTimeString('ru-RU', {hour:'2-digit', minute:'2-digit'});
+tick(); setInterval(tick, 1000);
+
+/* ---------- Окна при загрузке ---------- */
+ambientConfetti();
+openApp('settings');
+openApp('music');
+</script>
+</body>
+</html>
